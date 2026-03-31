@@ -1,18 +1,40 @@
 ---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: cert-manager
+  namespace: flux-system
+spec:
+  interval: 5m
+  type: oci
+  url: oci://quay.io/jetstack/charts
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmChart
+metadata:
+  name: cert-manager
+  namespace: flux-system
+spec:
+  chart: cert-manager
+  interval: 5m
+  sourceRef:
+    kind: HelmRepository
+    name: cert-manager
+  version: 1.20.1
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: cert-manager
   namespace: flux-system
 spec:
-  interval: 30m
+  interval: 5m
   releaseName: cert-manager
   targetNamespace: cert-manager
   chartRef:
     kind: HelmChart
     name: cert-manager
     namespace: flux-system
-  timeout: 5m
   driftDetection:
     mode: enabled
   install:
