@@ -1,0 +1,13 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmChart
+metadata:
+  name: cert-manager
+  namespace: flux-system
+spec:
+  chart: cert-manager
+  interval: 5m
+  sourceRef:
+    kind: HelmRepository
+    name: cert-manager
+  version: 1.20.1
