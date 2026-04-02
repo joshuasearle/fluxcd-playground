@@ -1,0 +1,1 @@
+- Manage flux manifests instead of `flux install`

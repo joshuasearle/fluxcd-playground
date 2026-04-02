@@ -1,0 +1,13 @@
+{{ $config := datasource "config" }}
+---
+repository:
+  url: quay.io/jetstack/charts
+  type: oci
+
+chart:
+  name: cert-manager
+  version: "{{ $config.certManager.version }}"
+
+release:
+  name: cert-manager
+  namespace: cert-manager

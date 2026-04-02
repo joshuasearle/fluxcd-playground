@@ -1,0 +1,119 @@
+{{ $config := datasource "config" }}
+---
+crds:
+  enabled: true
+
+replicaCount: 3
+
+podDisruptionBudget:
+  enabled: true
+  maxUnavailable: 1
+
+config:
+  apiVersion: controller.config.cert-manager.io/v1alpha1
+  kind: ControllerConfiguration
+  enableGatewayAPI: true
+
+resources:
+  limits:
+    memory: "{{ $config.certManager.controller.resources.limits.memory }}"
+  requests:
+    cpu: "{{ $config.certManager.controller.resources.requests.cpu }}"
+    memory: "{{ $config.certManager.controller.resources.requests.memory }}"
+
+ingressShim:
+  defaultIssuerName: letsencrypt
+  defaultIssuerKind: ClusterIssuer
+
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/component: controller
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/component: controller
+
+webhook:
+  replicaCount: 3
+
+  podDisruptionBudget:
+    enabled: true
+    maxUnavailable: 1
+
+  validatingWebhookConfiguration:
+    namespaceSelector:
+      matchExpressions:
+        - key: "cert-manager.io/disable-validation"
+          operator: "NotIn"
+          values:
+            - "true"
+        - key: "name"
+          operator: "NotIn"
+          values:
+            - kube-system
+
+  resources:
+    requests:
+      cpu: "{{ $config.certManager.webhook.resources.requests.cpu }}"
+      memory: "{{ $config.certManager.webhook.resources.requests.memory }}"
+    limits:
+      memory: "{{ $config.certManager.webhook.resources.limits.memory }}"
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/instance: cert-manager
+          app.kubernetes.io/component: webhook
+    - maxSkew: 1
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/instance: cert-manager
+          app.kubernetes.io/component: webhook
+
+cainjector:
+  replicaCount: 3
+
+  podDisruptionBudget:
+    enabled: true
+    maxUnavailable: 1
+
+  resources:
+    requests:
+      cpu: "{{ $config.certManager.cainjector.resources.requests.cpu }}"
+      memory: "{{ $config.certManager.cainjector.resources.requests.memory }}"
+    limits:
+      memory: "{{ $config.certManager.cainjector.resources.limits.memory }}"
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/instance: cert-manager
+          app.kubernetes.io/component: cainjector
+    - maxSkew: 1
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/instance: cert-manager
+          app.kubernetes.io/component: cainjector
+
+acmesolver: {}
+
+startupapicheck:
+  enabled: false

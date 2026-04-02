@@ -1,3 +1,4 @@
+{{ $config := datasource "config" }}
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -10,4 +11,4 @@ spec:
   sourceRef:
     kind: GitRepository
     name: fluxcd-playground
-  path: ./manifests
+  path: "./rendered/{{ $config.name }}"
