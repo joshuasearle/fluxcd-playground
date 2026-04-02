@@ -1,7 +1,5 @@
 ---
 certManager:
-  version: 1.19.4
-
   controller:
     resources:
       requests:

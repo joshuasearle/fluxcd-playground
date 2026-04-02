@@ -1,0 +1,8 @@
+---
+version: 1.6.5
+
+podDisruptionBudget:
+  maxUnavailable: 1
+
+deployment:
+  replicas: 3

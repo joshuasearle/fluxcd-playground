@@ -1,0 +1,12 @@
+---
+repository:
+  url: docker.io/envoyproxy
+  type: oci
+
+chart:
+  name: gateway-helm
+  version: 1.7.1
+
+release:
+  name: envoy-gateway
+  namespace: envoy-gateway
